@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+
+<body>
+<form>
+<input type=button value="Start Process" onclick="open_win()">
+</form>
+
+<div id="div1">
+      <p id="p1">Links</p>
+      <p id="p2">Conclusion.</p>
+   </div>
+
+   <script type="text/javascript"> 
+      function randomInteger(min, max) {
+            // случайное число от min до (max+1)
+            let rand = min + Math.random() * (max + 1 - min);
+            return Math.floor(rand * 1000);
+      }
+
+      const openUrl = (url) => {
+            let link     = document.createElement('a');
+            link.href    = url;
+            link.target  = '_blank';
+
+            const node = document.createTextNode(url);
+            link.appendChild(node);
+            link.appendChild(document.createElement("br"));
+            
+            const element = document.getElementById('div1');
+            console.log(element)
+            const child = document.getElementById('p2');
+            console.log(child)
+            element.insertBefore(link, child);
+
+
+            link.click();
+      }
+
+function open_win() {
+      var linkArray = 
+      [
+            'https://bbc.com',
+            'https://rbc.ru'
+      ]
+      let interval  = randomInteger(7, 12);
+      linkArray.forEach((url) => {
+            interval = interval + randomInteger(2, 5);
+            console.log(url, 'interval = ', interval);
+
+            setTimeout(() => openUrl(url), interval);
+      });
+}
+</script>
+
+</body>
+
+</html>
