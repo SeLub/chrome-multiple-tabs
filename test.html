@@ -1,24 +1,94 @@
 <!DOCTYPE html>
-<html>
-<head>
-</head>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Update Linkedin profiles in database.</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+  </head>
 
 <body>
-<form>
-<input type=button value="Start Process" onclick="open_win()">
-</form>
 
-<div id="div1">
-      <p id="p1">Links</p>
-      <p id="p2">Conclusion.</p>
-   </div>
+      <main>
+            <div class="container py-4">
+              <header class="pb-3 mb-4 border-bottom">
+                <a href="/" class="d-flex align-items-center text-dark text-decoration-none">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor" class="bi bi-database-fill-add text-success" viewBox="0 0 16 16">
+                        <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0ZM8 1c-1.573 0-3.022.289-4.096.777C2.875 2.245 2 2.993 2 4s.875 1.755 1.904 2.223C4.978 6.711 6.427 7 8 7s3.022-.289 4.096-.777C13.125 5.755 14 5.007 14 4s-.875-1.755-1.904-2.223C11.022 1.289 9.573 1 8 1Z"/>
+                        <path d="M2 7v-.839c.457.432 1.004.751 1.49.972C4.722 7.693 6.318 8 8 8s3.278-.307 4.51-.867c.486-.22 1.033-.54 1.49-.972V7c0 .424-.155.802-.411 1.133a4.51 4.51 0 0 0-4.815 1.843A12.31 12.31 0 0 1 8 10c-1.573 0-3.022-.289-4.096-.777C2.875 8.755 2 8.007 2 7Zm6.257 3.998L8 11c-1.682 0-3.278-.307-4.51-.867-.486-.22-1.033-.54-1.49-.972V10c0 1.007.875 1.755 1.904 2.223C4.978 12.711 6.427 13 8 13h.027a4.552 4.552 0 0 1 .23-2.002Zm-.002 3L8 14c-1.682 0-3.278-.307-4.51-.867-.486-.22-1.033-.54-1.49-.972V13c0 1.007.875 1.755 1.904 2.223C4.978 15.711 6.427 16 8 16c.536 0 1.058-.034 1.555-.097a4.507 4.507 0 0 1-1.3-1.905Z"/>
+                      </svg>
+                  <span class="fs-3 text-success px-2">Profiles Updater</span>
+                </a>
+              </header>
+          
+              <div class="p-2 mb-4 bg-light rounded-5">
+                <div class="container-fluid py-2">
+                  <!-- <h1 class="display-5 fw-bold">Custom jumbotron</h1> -->
+                  <div class="row mb-2">
+                  <div class="col-md-8 fs-4">This page will help you to update LI Database.<br>Add list of urls to file <u>urlBank.txt</u> in the same folder as index.html.<br>
+                        <div class="alert alert-warning h6" role="alert">
+                              In Chrome DevTools Console you can find profiles and intervals.
+                            </div>
+                  </div>
+                  <div class="col-md-4 fs-4">Test</div>
+                  </div>
+                  <!-- <button class="btn btn-primary btn-lg" type="button" id="reload">Reload links</button> -->
+                  <input class="btn btn-success btn-lg" type=button value="Start Process" onclick="startProcess();">
+                </div>
+              </div>
+          
+              <div class="row align-items-md-stretch">
+                  <div class="row g-2">
+                        <div class="col-md">
+                              <div class="form-floating">
+                                    <textarea class="form-control" style="height: 350px; overflow-y: auto;" id="urlBank"></textarea>
+                                    <label for="floatingTextarea">Urls to open</label>
+                                  </div>
+                        </div>
+                        <div class="col-md">
+                          <div class="form-floating">
+                              <div class="form-floating">
+                                    <textarea class="form-control" style="height: 350px; overflow-y: auto;" id="eventLog"></textarea>
+                                    <label for="floatingTextarea">Event logger</label>
+                                  </div>
+                          </div>
+                        </div>
+                      </div>
+              </div>
+          
+              <footer class="pt-3 mt-4 text-muted border-top">
+                © 2023 Grabli
+              </footer>
+            </div>
+          </main>
 
    <script type="text/javascript"> 
+      let linkArray = [];
+
+      logPanel = document.getElementById("eventLog");
+
+      let txtFile = new XMLHttpRequest();
+      let allText = "file not found";
+
+      txtFile.onreadystatechange = function () {
+        if (txtFile.readyState === XMLHttpRequest.DONE && txtFile.status == 200) {
+            allText = txtFile.responseText;
+        }
+
+        document.getElementById('urlBank').innerHTML = allText;
+        linkArray = allText.split("\n");
+        console.log('linkArray = ', linkArray);
+    };
+      txtFile.open("GET", 'urlBank.txt', true);
+      txtFile.send(null);
+
       function randomInteger(min, max) {
             // случайное число от min до (max+1)
             let rand = min + Math.random() * (max + 1 - min);
             return Math.floor(rand * 1000);
       }
+
+function startProcess() {
 
       const openUrl = (url) => {
             let link     = document.createElement('a');
@@ -27,34 +97,21 @@
 
             const node = document.createTextNode(url);
             link.appendChild(node);
-            link.appendChild(document.createElement("br"));
-            
-            const element = document.getElementById('div1');
-            console.log(element)
-            const child = document.getElementById('p2');
-            console.log(child)
-            element.insertBefore(link, child);
-
-
             link.click();
+            logPanel.innerHTML += link + "\n";
       }
 
-function open_win() {
-      var linkArray = 
-      [
-            'https://bbc.com',
-            'https://rbc.ru'
-      ]
-      let interval  = randomInteger(7, 12);
+      logPanel.innerHTML += 'Process started...\n';
+      
+      let interval  = randomInteger(2, 5);
       linkArray.forEach((url) => {
-            interval = interval + randomInteger(2, 5);
-            console.log(url, 'interval = ', interval);
-
+            interval = interval + randomInteger(6, 10);
             setTimeout(() => openUrl(url), interval);
+            console.log(url, ' interval = ', interval);
       });
 }
-</script>
 
+</script>
 </body>
 
 </html>
