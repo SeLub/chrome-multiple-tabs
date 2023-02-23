@@ -26,20 +26,26 @@
                 <div class="container-fluid py-2">
                   <!-- <h1 class="display-5 fw-bold">Custom jumbotron</h1> -->
                   <div class="row mb-2">
-                  <div class="col-md-8 fs-4">This page will help you to update LI Database.<br>Add list of urls to file <u>urlBank.txt</u> in the same folder as index.html.<br>
-                        <div class="alert alert-warning h6" role="alert">
-                              In Chrome DevTools Console you can find profiles and intervals.
-                            </div>
+                  <div class="col-md-8 fs-4">
+                    <div>
+                    This page will help you to update LI Database.<br>Add list of urls to form <u>URLs Bank</u> below.<br> Use only <b>https://</b>.
+                    </div>
+                    <div class="mt-4">
+                      <button class="btn btn-primary btn-lg" type="button" id="reload" onclick="updateUrlBank()">Load links</button>
+                      <input class="btn btn-success btn-lg" type=button value="Open profiles" id="start" onclick="startProcess();">
+                      <!-- Button trigger modal -->
+                      <button type="button" class="btn btn-info btn-lg" data-bs-toggle="modal" data-bs-target="#exampleModal">Watch video</button>
+                    </div>
                   </div>
+
                   <div class="col-md-4 fs-4">
                     <img src="title.png" class="img-thumbnail" alt="Grabli LI profiles">
                   </div>
                   </div>
-                  <!-- <button class="btn btn-primary btn-lg" type="button" id="reload">Reload links</button> -->
-                  <input class="btn btn-success btn-lg" type=button value="Start Process" onclick="startProcess();">
-                  <!-- Button trigger modal -->
-                  <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#exampleModal">Watch video</button>
                 </div>
+              </div>
+              <div class="alert alert-secondary" role="alert" id="message">
+                Hello, I'm ready to work. Insert Link in form below.
               </div>
           
               <div class="row align-items-md-stretch">
@@ -47,7 +53,7 @@
                         <div class="col-md">
                               <div class="form-floating">
                                     <textarea class="form-control" style="height: 350px; overflow-y: auto;" id="urlBank"></textarea>
-                                    <label for="floatingTextarea">Urls to open</label>
+                                    <label for="floatingTextarea">URLs Bank</label>
                                   </div>
                         </div>
                         <div class="col-md">
@@ -82,7 +88,6 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
       </div>
     </div>
   </div>
@@ -91,34 +96,58 @@
 
    <script type="text/javascript"> 
       let linkArray = [];
+      let processAvailable = false;
 
-      logPanel = document.getElementById("eventLog");
+      let logPanel = document.getElementById("eventLog");
+      let urlBank = document.getElementById('urlBank');
+      let message = document.getElementById('message');
+      let processButton = document.getElementById('start');
+      processButton.disabled = true;
 
-
-
-
-      let txtFile = new XMLHttpRequest();
-      let allText = "file not found";
-
-      txtFile.onreadystatechange = function () {
-        if (txtFile.readyState === XMLHttpRequest.DONE && txtFile.status == 200) {
-            allText = txtFile.responseText;
+      function sendMessage (text, color){
+        // color variants: primary, secondary, success, danger, warning, info, light, dark
+        message.innerHTML = text;
+        message.className = 'alert alert-' + color;
+      }
+      
+      function validateURL(url) {
+        if(/^(http(s):\/\/.)[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/g.test(url)) {
+          return true;
+        } else {
+          return false;
         }
+      }
 
-        document.getElementById('urlBank').innerHTML = allText;
-        linkArray = allText.split("\n");
-        console.log('linkArray = ', linkArray);
-    };
-      txtFile.open("GET", 'urlBank.txt', true);
-      txtFile.send(null);
+      function validateTextInput(textInput) {
+        linkArray = textInput.trim().split('\n');
+        console.log(linkArray)
+        validatedArray = linkArray.map((url) => validateURL(url));
+        console.log(validatedArray);
+        if (validatedArray.includes(false)) { return false } else { return true };
+      }
+
+      function updateUrlBank(){
+        console.log('updateUrlBank');
+        if(urlBank.value !== '') {
+          let textInput = urlBank.value;
+            if (validateTextInput(textInput)) {
+              processButton.disabled = false;
+              sendMessage('URLs are valid', 'success'); 
+            } else {
+              processButton.disabled = true;
+              sendMessage('URLs are not valid ', 'danger');
+            }
+          console.log("textInput = ", textInput);
+        } else {
+          sendMessage('Please, insert URLs below', 'danger');
+        }
+      }
 
       function randomInteger(min, max) {
             // случайное число от min до (max+1)
             let rand = min + Math.random() * (max + 1 - min);
             return Math.floor(rand * 1000);
       }
-
-function startProcess() {
 
       const openUrl = (url) => {
             let link     = document.createElement('a');
@@ -131,19 +160,15 @@ function startProcess() {
             logPanel.innerHTML += link + "\n";
       }
 
-      logPanel.innerHTML += 'Process started...\n';
-      
-      let interval  = randomInteger(2, 5);
-      if (linkArray[0] === 'file not found') {
-        logPanel.innerHTML += 'The process has been terminated.\nReason: The urlBank.txt file was not found.\nTry to put urlBank.txt and index.html in the same folder and open index.html on the server.';
-      } else {
-      linkArray.forEach((url) => {
+      function startProcess() {
+          logPanel.innerHTML += 'Process started...\n';
+          let interval  = randomInteger(2, 5);
+          linkArray.forEach((url) => {
             interval = interval + randomInteger(6, 10);
             setTimeout(() => openUrl(url), interval);
             console.log(url, ' interval = ', interval);
-      });
-    }
-}
+          });
+      }
 
 </script>
 </body>
