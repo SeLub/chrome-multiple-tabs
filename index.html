@@ -46,10 +46,20 @@
                   </div>
                 </div>
               </div>
-              <div class="alert alert-secondary" role="alert" id="message">
-                Hello, I'm ready to work. Insert Link in form below.
+
+              <div class="row">
+                <div class="col-md-10 alert alert-secondary" role="alert" id="message">
+                  Hello, I'm ready to work. Insert Link in form below.
+                </div>
+                <!-- <div class="col-md-1 alert alert-success text-center" role="alert" id="vpnMessage">
+                    VPN
+                </div> -->
+                <div class="col-md-2">
+                  <label for="customRange3" class="form-label">Interval from <span class="badge bg-primary rounded-pill">6</span> to <span class="badge bg-primary rounded-pill" id="interval">10</span></label>
+                  
+                  <input type="range" class="form-range" min="6" max="20" step="2" id="intervalRange" onchange="setIntervalTo(this.value)">
+                </div>
               </div>
-          
               <div class="row align-items-md-stretch">
                   <div class="row g-2">
                         <div class="col-md">
@@ -80,7 +90,7 @@
   <div class="modal-dialog modal-xl">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Video tutorial</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -99,6 +109,7 @@
    <script type="text/javascript"> 
       let linkArray = [];
       let processAvailable = false;
+      let intervalTo = 10;
 
       let logPanel = document.getElementById("eventLog");
       let urlBank = document.getElementById('urlBank');
@@ -106,13 +117,23 @@
       let message = document.getElementById('message');
       let processButton = document.getElementById('start');
       let downloadButton = document.getElementById('download');
+      let intervalMessage = document.getElementById('interval');
+
+      logPanel.innerHTML += 'Interval = ' + intervalTo + "\n";
+  
       processButton.disabled = true;
       downloadButton.disabled = true;
+
+      function setIntervalTo(value) {
+        intervalMessage.innerHTML = value;
+        intervalTo = value;
+        logPanel.innerHTML +='Set Interval to ' + intervalTo + "\n";
+      }
 
       function sendMessage (text, color){
         // color variants: primary, secondary, success, danger, warning, info, light, dark
         message.innerHTML = text;
-        message.className = 'alert alert-' + color;
+        message.className = 'col-md-8 alert alert-' + color;
       }
       
       function validateURL(url) {
@@ -153,11 +174,12 @@
 
       function randomInteger(min, max) {
             // случайное число от min до (max+1)
-            let rand = min + Math.random() * (max + 1 - min);
-            return Math.floor(rand * 1000);
+            let rand = Math.floor(Math.random() * (max - min + 1) + min)
+            console.log('min ', min, ' max ', max, ' rand ', rand);
+            return rand;
       }
 
-      const openUrl = (url) => {
+      const openUrl = (url, interval) => {
             let link     = document.createElement('a');
             link.href    = url;
             link.target  = '_blank';
@@ -165,16 +187,16 @@
             const node = document.createTextNode(url);
             link.appendChild(node);
             link.click();
-            logPanel.innerHTML += link + "\n";
       }
 
       function openProfiles() {
-          logPanel.innerHTML += 'Process started...\n';
-          let interval  = randomInteger(2, 5);
+          logPanel.innerHTML += '  Process started...\n';
+          let interval  = 2;
           linkArray.forEach((url) => {
-            interval = interval + randomInteger(6, 10);
-            setTimeout(() => openUrl(url), interval);
-            console.log(url, ' interval = ', interval);
+            interval = interval + randomInteger(6, intervalTo) * 1000;
+            console.log('Interval = ', interval);
+            logPanel.innerHTML += '    ' + url + '........ ~' + Math.round(interval/1000) +" sec\n";
+            setTimeout(() => openUrl(url, interval), interval);
           });
       }
 
