@@ -31,16 +31,12 @@
                     Add list of urls to form <u>URLs Bank</u> below.<br>
                     </div>
                     <div class="mt-4">
-                      <!-- <button class="btn btn-primary btn-lg" type="button" id="reload" onclick="updateUrlBank()">Load links</button> -->
                       <input class="btn btn-success btn-lg" type=button value="Open profiles" id="start" onclick="openProfiles();">
-                      <button type="button" class="btn btn-warning btn-lg" id="download"  onclick="downloadURLs()">Download JSONs</button>
-                      <!-- Button trigger modal -->
-                      <button type="button" class="btn btn-info btn-lg" data-bs-toggle="modal" data-bs-target="#exampleModal">Watch video</button>
                     </div>
                   </div>
 
                   <div class="col-md-4 fs-4">
-                    This page will help you to:<br>1. Update LI Database<br>2. Download LI Profiles<br> Use only valid <b>https://</b> per line.
+                    This page will help you to update LI profiles in Database.<br> Use only valid <b>https://</b> per line.
                     <!-- <img src="title.png" class="img-thumbnail" alt="Grabli LI profiles"> -->
                   </div>
                   </div>
@@ -51,9 +47,6 @@
                 <div class="col-md-10 alert alert-secondary" role="alert" id="message">
                   Hello, I'm ready to work. Insert Link in form below.
                 </div>
-                <!-- <div class="col-md-1 alert alert-success text-center" role="alert" id="vpnMessage">
-                    VPN
-                </div> -->
                 <div class="col-md-2">
                   <label for="customRange3" class="form-label">Interval from <span class="badge bg-primary rounded-pill">6</span> to <span class="badge bg-primary rounded-pill" id="interval">10</span></label>
                   
@@ -199,57 +192,6 @@
             setTimeout(() => openUrl(url, interval), interval);
           });
       }
-
-      async function postData(url = '', data = {}) {
-        // Default options are marked with *
-        const response = await fetch(url, {
-            method: 'POST', // *GET, POST, PUT, DELETE, etc.
-            mode: 'cors', // no-cors, *cors, same-origin
-            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-            credentials: 'same-origin', // include, *same-origin, omit
-            headers: {
-              'Content-Type': 'application/json'
-              // 'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            redirect: 'follow', // manual, *follow, error
-            referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-            body: JSON.stringify(data) // body data type must match "Content-Type" header
-            });
-        return response.json(); // parses JSON response into native JavaScript objects
-      }
-
-      async function downloadURLs() {
-        linkArray.forEach( async (url) => {
-          //let json = await postData('https://jsonplaceholder.typicode.com/posts/1', url);
-          let json = await fetch('https://jsonplaceholder.typicode.com/posts', 
-            {
-              method: 'POST',
-              body: JSON.stringify({
-                title: 'foo',
-                body: 'bar',
-                userId: 1,
-              }),
-              headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-              },
-            })
-          .then((response) => response.json())
-          .then((json) => {
-            jsonArray.push(JSON.stringify(json).trim());
-            console.log('jsonArray = ', jsonArray)
-
-            const url = window.URL.createObjectURL(new Blob(jsonArray, {type: 'application/json'}));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', 'profiles.json');
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-
-          });
-        });
-      }
-
 
 </script>
 </body>
