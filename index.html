@@ -109,13 +109,11 @@
       urlBank.addEventListener('change', updateUrlBank);
       let message = document.getElementById('message');
       let processButton = document.getElementById('start');
-      let downloadButton = document.getElementById('download');
       let intervalMessage = document.getElementById('interval');
 
       logPanel.innerHTML += 'Interval = ' + intervalTo + "\n";
   
       processButton.disabled = true;
-      downloadButton.disabled = true;
 
       function setIntervalTo(value) {
         intervalMessage.innerHTML = value;
@@ -140,26 +138,21 @@
       function validateTextInput(textInput) {
         linkArray = textInput.trim().split('\n');
         jsonArray = [];
-        console.log(linkArray)
         validatedArray = linkArray.map((url) => validateURL(url));
         console.log(validatedArray);
         if (validatedArray.includes(false)) { return false } else { return true };
       }
 
       function updateUrlBank(){
-        console.log('updateUrlBank');
         if(urlBank.value !== '') {
           let textInput = urlBank.value;
             if (validateTextInput(textInput)) {
               processButton.disabled = false;
-              downloadButton.disabled = false;
               sendMessage('URLs are valid', 'success'); 
             } else {
               processButton.disabled = true;
-              downloadButton.disabled = true;
               sendMessage('URLs are not valid ', 'danger');
             }
-          console.log("textInput = ", textInput);
         } else {
           sendMessage('Please, insert URLs below', 'danger');
         }
